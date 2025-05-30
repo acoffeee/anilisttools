@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AniList User Checker</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { padding: 8px; margin: 5px; }
+  </style>
+</head>
+<body style="text-align: center">
+  <h2>Compare Users</h2>
+  <div>
+  <input type="text" id="user1"  placeholder="My username"></input>
+  <input type="text" id="user2"  placeholder="Your username"> </input>
+  </div>
+  <button id = "compare">Compare users</button>
+  <p id="result"></p>
+
+  <script>
+    document.getElementById("compare").addEventListener("click", checkUser);
+    async function checkUser() {
+      document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
+      for (let i=1;i <3; i++) {
+      let username = document.getElementById(`user${i}`).value;
+
+      const query = `
+        query($userName: String) {
+          MediaListCollection(userName: $userName, type: ANIME,status: COMPLETED, sort: FINISHED_ON ){
+                        user{
+                        name
+                            statistics{
+                                anime{
+                                count
+                                meanScore
+                                standardDeviation
+                                }
+                              }
+                        }
+                        lists{
+                        name
+                            entries{
+                                score
+                                media{
+                                    id
+                                }
+                            }
+                        }
+          }
+        }
+
+      `;
+      let variables = { userName: username };
+
+        const response = await fetch('https://graphql.anilist.co', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({ query, variables }),
+        });
+
+        const data = await response.json();
+        
+        document.getElementById("result").innerHTML += `<p> ${data?.data?.MediaListCollection?.user?.statistics?.anime?.count}</p>`
+    }
+    }
+  </script>
+</body>
+</html>
