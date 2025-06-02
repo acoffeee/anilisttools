@@ -23,15 +23,16 @@
     let userlistone;
     let userone_standerizedlist;
     let usertwo_standerizedlist;
-    async funtion listofoperations() {
+     async function listofoperations() {
       await getuserdata();
       userlistone = await standerizelists(userlistone);
       userlisttwo = await standerizelists(userlisttwo);
       //await matchlists();
       //await comparelists();
       //await calculatefinalstandarddeviation():
-      document.getElementById("result").innerHTML = `<p> ${userlistone}`;
+      document.getElementById("result").innerHTML += `<p> did it work? ${JSON.stringify(userlistone, null, 2)}`;
     }
+    
     async function getuserdata() {
       document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
         for (let i=1; i <3; i++) {
@@ -77,19 +78,25 @@
         userlisttwo = await response.json();
         }
         }
-      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(userlistone, null, 2)} user2 is: ${userlisttwo}</p>`;
+      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(userlistone, null, 2)} ok \n</p>`;
     }
     function standerizelists(userlist) {
-    let temp = userlist?.data?.MediaListCollection?.lists?.Completed?.entries;
-    let mean = userlist?.data?.MediaListCollection?.user?.statistics?.anime?.meanScore;
-    let SD = userlist?.data?.MediaListCollection?.user?.statistics>,standardDeviation;
-    let new_list;
-    for (let i=0; i < temp.length;i++) {
-      let new_score = ((temp{i}?.score *10) - mean) / SD;
-      let new_entry = {"score": new_score, "media": temp{i}.media};
-      new_list.append(new_entry)
+    let temp = userlist['data']['MediaListCollection']['lists'][0];
+    let new_entry ={};
+    let mean = userlist['data']['MediaListCollection']['user']['statistics']['anime']['meanScore'];
+    let SD = userlist['data']['MediaListCollection']['user']['statistics']['anime']['standardDeviation'];
+    let new_list = [];
+    for (let i=0; i < temp['entries'].length;i++) {
+      let new_score = ((temp['entries'][i]['score'] * 10) - mean) / SD;
+      console.log(new_score);
+      console.log("test");
+      new_entry.score = new_score;
+      new_entry.media = temp['entries'][i]['media'];
+      new_list.push(new_entry);
     }
-    return new_list
+    console.log(new_list);
+    console.log(temp);
+    return new_list;
     }
   </script>
 </body>
