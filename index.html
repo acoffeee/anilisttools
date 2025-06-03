@@ -9,11 +9,11 @@
   </style>
 </head>
 <body style="text-align: center">
-  <h2>Compare Users</h2>
+  <h2>Get friend list compatibiity!</h2>
   <div>
   <input type="text" id="user"  placeholder="My username" value="coffeee"></input>
   </div>
-  <button id = "getusers">Compare users</button>
+  <button id = "getusers"> Start</button>
   <p id="result"></p>
   <p id="testing"></p>
   <p id="ratelimit"></p>
@@ -42,9 +42,10 @@
           console.log(all_comparisions); 
         } catch (error) {
             for (let timer= 60; timer >0; timer--) {
-              document.getElementById("ratelimit").innerHTML = `<p> sorry for the delay! we're being rate limited rn please wait ${timer} seconds! </p>`;
+              document.getElementById("ratelimit").innerHTML = `<p> sorry for the delay! we're being rate limited rn retrying in: ${timer} seconds! </p>`;
               await sleep(1000);
             }
+          document.getElementById("ratelimit").innerHTML = `<p></P>`;
           i--;
           }
       }
@@ -94,7 +95,7 @@
         
         
          userlistone = await response.json();
-      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(userlistone, null, 2)} ok \n</p>`;
+     // document.getElementById("result").innerHTML = `<p> ${JSON.stringify(userlistone, null, 2)} ok \n</p>`;
       return userlistone;
     }
     
