@@ -27,10 +27,10 @@
       await getuserdata();
       userlistone = await standerizelists(userlistone);
       userlisttwo = await standerizelists(userlisttwo);
-      //await matchlists();
-      //await comparelists();
-      //await calculatefinalstandarddeviation():
-      document.getElementById("result").innerHTML += `<p> did it work? ${JSON.stringify(userlistone, null, 2)}`;
+      newly_matched_lists = await matchlists(userlistone, userlisttwo);
+      let compared_lists = compare(newly_matched_lists);
+      const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
+      document.getElementById("result").innerHTML += `<p> did it work? ${compatibility}`;
     }
     
     async function getuserdata() {
@@ -82,22 +82,52 @@
     }
     function standerizelists(userlist) {
     let temp = userlist['data']['MediaListCollection']['lists'][0];
-    let new_entry ={};
+    let new_list = [];
     let mean = userlist['data']['MediaListCollection']['user']['statistics']['anime']['meanScore'];
     let SD = userlist['data']['MediaListCollection']['user']['statistics']['anime']['standardDeviation'];
-    let new_list = [];
     for (let i=0; i < temp['entries'].length;i++) {
       let new_score = ((temp['entries'][i]['score'] * 10) - mean) / SD;
-      console.log(new_score);
-      console.log("test");
-      new_entry.score = new_score;
-      new_entry.media = temp['entries'][i]['media'];
-      new_list.push(new_entry);
+      //console.log(new_score);
+      //console.log("test");
+       const new_entry = {score: new_score, id: temp['entries'][i]['media']['id']};
+       new_list.push(new_entry);
     }
     console.log(new_list);
     console.log(temp);
     return new_list;
     }
+    function matchlists(listofmainuser, listofotherperson) {
+      let matched_anime = [];
+      console.log(listofmainuser[34])
+      for (let i = 0; i < listofmainuser.length; i++) {
+        for (let j = 0; j <listofotherperson.length; j++){
+          if (listofmainuser[i]['id'] == listofotherperson[j]['id']) {
+            let anime = { id: listofmainuser[i]['id'], useroneSD: listofmainuser[i]['score'], usertwoSD: listofotherperson[j]['score']};
+            matched_anime.push(anime);
+            break;
+          }
+        }
+      }
+      return matched_anime;  
+      }
+  function compare(formatted_list) {
+    let differenceofscores = [];
+    for (let i = 0; i <formatted_list.length; i++) {
+      let difference = Math.abs(formatted_list[i]['useroneSD'] - formatted_list[i]['usertwoSD']);
+      differenceofscores.push(difference);
+    }
+    console.log(differenceofscores);
+    return differenceofscores;
+  }
+  function calculatefinalstandarddeviationmean(bunchonumbers) {
+    let finalanswer;
+    let sum = 0;
+    for (let i = 0; i < bunchonumbers.length; i++) {
+      sum += bunchonumbers[i];
+    }
+    finalanswer = sum / bunchonumbers.length;
+    return finalanswer;
+  }
   </script>
 </body>
 </html>
