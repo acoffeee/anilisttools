@@ -34,7 +34,7 @@
       newly_matched_lists = await matchlists(User_list_standerized, standerized_friend_list);
       let compared_lists = compare(newly_matched_lists);
       const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
-      let formatcompatibilioty = { name: friend, rating: compatibility };
+      let formatcompatibilioty = { name: friend, rating: compatibility, entries_shared: newly_matched_lists.length };
       all_comparisions.push(formatcompatibilioty);
       console.log(all_comparisions);
     }
