@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AniList Public Profile + Friends Attempt</title>
+</head>
+<body>
+  <h1>AniList Public User Info + Friends (No Auth)</h1>
+  <input type="text" id="username" placeholder="Enter AniList username">
+  <button onclick="getUserAndFriends()">Fetch</button>
+
+  <pre id="output">Waiting for input...</pre>
+
+  <script>
+    async function getUserAndFriends() {
+      const username = document.getElementById('username').value.trim();
+      const output = document.getElementById('output');
+
+      if (!username) {
+        output.textContent = "Please enter a username.";
+        return;
+      }
+
+      const query = `
+        query ($userId: Int!) {
+          Page(page: 1, perPage: 100) {
+            following(userId: $userId) {  # hardcoded dummy ID for test
+              id
+              name
+            }
+          }
+        }
+      `;
+
+      const variables = { userId: 7051939 };
+        const response = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query, variables })
+        });
+
+        const result = await response.json();
+
+        // If there's an error
+        if (result.errors) {
+          output.textContent = "Error:\n" + result.errors.map(e => e.message).join("\n");
+          return;
+        }
+        console.log(result);
+    }
+      
+  </script>
+</body>
+</html>
