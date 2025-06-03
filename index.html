@@ -41,7 +41,7 @@
           all_comparisions.push(formatcompatibilioty);
           console.log(all_comparisions); 
         } catch (error) {
-            for (let timer= 60; timer == 0; timer--) {
+            for (let timer= 60; timer >0; timer--) {
               document.getElementById("ratelimit").innerHTML = `<p> sorry for the delay! we're being rate limited rn please wait ${timer} seconds! </p>`;
               await sleep(1000);
             }
@@ -171,8 +171,14 @@
     let new_list = [];
     let mean = userlist['data']['MediaListCollection']['user']['statistics']['anime']['meanScore'];
     let SD = userlist['data']['MediaListCollection']['user']['statistics']['anime']['standardDeviation'];
+    let formatscore;
+    if (temp['entries'][4]['score'] > 11) {
+      formatscore = 1;
+    } else {
+      formatscore = 10;
+    }
     for (let i=0; i < temp['entries'].length;i++) {
-      let new_score = ((temp['entries'][i]['score'] * 10) - mean) / SD;
+      let new_score = ((temp['entries'][i]['score'] * formatscore) - mean) / SD;
       //console.log(new_score);
       //console.log("test");
        const new_entry = {score: new_score, id: temp['entries'][i]['media']['id']};
