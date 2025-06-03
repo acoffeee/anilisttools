@@ -23,6 +23,7 @@
       let maindude= await getuserdata(username);
       let following_list = await getfollowing(maindude['data']['MediaListCollection']['user']['id']);
       let follower_list = await getfollowers(maindude['data']['MediaListCollection']['user']['id']);
+      let friend_list = getfriends(following_list, follower_list);
       userlistone = await standerizelists(userlistone);
       userlisttwo = await standerizelists(userlisttwo);
       newly_matched_lists = await matchlists(userlistone, userlisttwo);
@@ -100,6 +101,7 @@
         const result = await response.json();
         let following_list = result['data']['Page']['following'];
         console.log("following" + following_list);
+        return following_list;
     }
         async function getfollowers(userid) {
        const query = `
@@ -125,8 +127,20 @@
         const result = await response.json();
         let follower_list = result['data']['Page']['followers'];
         console.log("followers " + follower_list);
+        return follower_list;
     }
-    
+    function getfriends(following, followers) {
+      let friends= []
+      for (let i=0; i<following.length;i++) {
+        for (let j = 0; j <followers.length; j++ ) {
+          if (following[i]['id'] === followers[j]['id']) {
+            friends.push(following[i]['name']);
+            break;
+          }
+        }
+      }
+      console.log(friends);
+    }
     
     
     
