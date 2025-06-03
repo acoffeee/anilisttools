@@ -48,7 +48,7 @@
           i--;
           }
       }
-      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(all_comparisions, null, 2)}</p>`;
+      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(all_comparisions, null, 0)}</p>`;
      }
   function sleep(ms) {
   return new Promise(resolve=>setTimeout(resolve,ms));
