@@ -11,37 +11,43 @@
 <body style="text-align: center">
   <h2>Compare Users</h2>
   <div>
-  <input type="text" id="user1"  placeholder="My username" value="coffeee"></input>
-  <input type="text" id="user2"  placeholder="Your username" value="awspear"> </input>
+  <input type="text" id="user"  placeholder="My username" value="coffeee"></input>
   </div>
   <button id = "getusers">Compare users</button>
   <p id="result"></p>
   <p id="testing"></p>
   <script>
     document.getElementById("getusers").addEventListener("click", listofoperations);
-    let userlisttwo;
-    let userlistone;
-    let userone_standerizedlist;
-    let usertwo_standerizedlist;
      async function listofoperations() {
-      await getuserdata();
-      userlistone = await standerizelists(userlistone);
-      userlisttwo = await standerizelists(userlisttwo);
-      newly_matched_lists = await matchlists(userlistone, userlisttwo);
+      const username = document.getElementById("user").value;
+      let maindude= await getuserdata(username);
+      let following_list = await getfollowing(maindude['data']['MediaListCollection']['user']['id']);
+      let follower_list = await getfollowers(maindude['data']['MediaListCollection']['user']['id']);
+      let friend_list =  getfriends(following_list, follower_list);
+      let User_list_standerized = await standerizelists(maindude);
+      let all_comparisions = [];
+      console.log(friend_list);
+      for (let i = 0; friend_list.length; i++) {
+      let friend = friend_list[i];
+      let friends_list = await getuserdata(friend);
+      let standerized_friend_list = await standerizelists(friend);
+      newly_matched_lists = await matchlists(User_list_standerized, standerized_friend_list);
       let compared_lists = compare(newly_matched_lists);
       const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
-      document.getElementById("result").innerHTML += `<p> did it work? ${compatibility}`;
+      let formatcompatibilioty = { name: friend, rating: compatibility };
+      all_comparisions.push(formatcompatibilioty);
+      }
+      console.log(all_comparisions);
     }
     
-    async function getuserdata() {
+    async function getuserdata(username) {
       document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
-        for (let i=1; i <3; i++) {
-          let username = document.getElementById(`user${i}`).value;
           const query = `
             query($userName: String) {
               MediaListCollection(userName: $userName, type: ANIME,status: COMPLETED, sort: FINISHED_ON ){
                 user{
                   name
+                  id
                     statistics{
                       anime{
                         count
@@ -72,14 +78,81 @@
           },
           body: JSON.stringify({ query, variables }),
         });
-        if (i == 1) { 
+        
+        
          userlistone = await response.json();
-        } else {
-        userlisttwo = await response.json();
-        }
-        }
       document.getElementById("result").innerHTML = `<p> ${JSON.stringify(userlistone, null, 2)} ok \n</p>`;
+      return userlistone;
     }
+    
+    async function getfollowing(userid) {
+       const query = `
+        query ($userId: Int!) {
+          Page(page: 1, perPage: 100) {
+            following(userId: $userId) {  # hardcoded dummy ID for test
+              id
+              name
+            }
+          }
+        }
+      `;
+
+      const variables = { userId: userid };
+        const response = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query, variables })
+        });
+
+        const result = await response.json();
+        let following_list = result['data']['Page']['following'];
+        console.log("following" + following_list);
+        return following_list;
+    }
+        async function getfollowers(userid) {
+       const query = `
+        query ($userId: Int!) {
+          Page(page: 1, perPage: 100) {
+            followers(userId: $userId) {  # hardcoded dummy ID for test
+              id
+              name
+            }
+          }
+        }
+      `;
+
+      const variables = { userId: userid };
+        const response = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query, variables })
+        });
+
+        const result = await response.json();
+        let follower_list = result['data']['Page']['followers'];
+        console.log("followers " + follower_list);
+        return follower_list;
+    }
+    function getfriends(following, followers) {
+      let friends= [];
+      for (let i=0; i<following.length;i++) {
+        for (let j = 0; j <followers.length; j++ ) {
+          if (following[i]['id'] === followers[j]['id']) {
+            friends.push(following[i]['name']);
+            break;
+          }
+        }
+      }
+      console.log(friends);
+      return friends;
+    }
+    
+    
+    
     function standerizelists(userlist) {
     let temp = userlist['data']['MediaListCollection']['lists'][0];
     let new_list = [];
