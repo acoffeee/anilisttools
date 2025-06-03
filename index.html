@@ -50,7 +50,9 @@
           i--;
           }
       }
-      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(all_comparisions, null, 0)}</p>`;
+      for (let i = 0; i < all_comparisions.length; i++) {
+      document.getElementById("result").innerHTML += `<p>Person: ${all_comparisions[i]['name']} <br> compatibility: ${all_comparisions[i]['rating']} <br>entries shared: ${all_comparisions[i]['entries_shared']}</p>`;
+      }
       createdownloadlink(all_comparisions);
      }
      
@@ -60,7 +62,7 @@ function createdownloadlink(daarray) {
   type: "application/json",
 });
 const listdownload = URL.createObjectURL(blob)
-document.getElementById("downloadbutton").innerHTML = `<a href="${listdownload}"> Click here to download </a>`;
+document.getElementById("downloadbutton").innerHTML = `<a href="${listdownload} download="Anilistcompatibility.txt"> Click here to download </a>`;
 
 }
 function sleep(ms) {
