@@ -14,6 +14,7 @@
   <input type="text" id="user"  placeholder="My username" value="coffeee"></input>
   </div>
   <button id = "getusers"> Start</button>
+  <p id="downloadbutton"></p>
   <p id="result"></p>
   <p id="testing"></p>
   <p id="ratelimit"></p>
@@ -50,10 +51,23 @@
           }
       }
       document.getElementById("result").innerHTML = `<p> ${JSON.stringify(all_comparisions, null, 0)}</p>`;
+      createdownloadlink(all_comparisions);
      }
-  function sleep(ms) {
+     
+function createdownloadlink(daarray) {
+  const list = daarray;
+  const blob = new Blob([JSON.stringify(list, null, 2)], {
+  type: "application/json",
+});
+const listdownload = URL.createObjectURL(blob)
+document.getElementById("downloadbutton").innerHTML = `<a href="${listdownload}"> Click here to download </a>`;
+
+}
+function sleep(ms) {
   return new Promise(resolve=>setTimeout(resolve,ms));
 }
+
+
     async function getuserdata(username) {
       document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
           const query = `
