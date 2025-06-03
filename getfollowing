@@ -2,26 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AniList Public Profile + Friends Attempt</title>
+  <title>AniList User Checker</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { padding: 8px; margin: 5px; }
+  </style>
 </head>
-<body>
-  <h1>AniList Public User Info + Friends (No Auth)</h1>
-  <input type="text" id="username" placeholder="Enter AniList username">
-  <button onclick="getUserAndFriends()">Fetch</button>
-
-  <pre id="output">Waiting for input...</pre>
-
+<body style="text-align: center">
+  <h2>Compare Users</h2>
+  <div>
+  <input type="text" id="user"  placeholder="My username" value="coffeee"></input>
+  </div>
+  <button id = "getusers">Compare users</button>
+  <p id="result"></p>
+  <p id="testing"></p>
   <script>
-    async function getUserAndFriends() {
-      const username = document.getElementById('username').value.trim();
-      const output = document.getElementById('output');
+    document.getElementById("getusers").addEventListener("click", listofoperations);
+     async function listofoperations() {
+      const username = document.getElementById("user").value;
+      let maindude= await getuserdata(username);
+      let following_list = await getfollowing(maindude['data']['MediaListCollection']['user']['id']);
+      let follower_list = await getfollowers(maindude['data']['MediaListCollection']['user']['id']);
+      userlistone = await standerizelists(userlistone);
+      userlisttwo = await standerizelists(userlisttwo);
+      newly_matched_lists = await matchlists(userlistone, userlisttwo);
+      let compared_lists = compare(newly_matched_lists);
+      const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
+      document.getElementById("result").innerHTML += `<p> did it work? ${compatibility}`;
+    }
+    
+    async function getuserdata(username) {
+      document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
+          const query = `
+            query($userName: String) {
+              MediaListCollection(userName: $userName, type: ANIME,status: COMPLETED, sort: FINISHED_ON ){
+                user{
+                  name
+                  id
+                    statistics{
+                      anime{
+                        count
+                        meanScore
+                        standardDeviation
+                      }
+                    }
+                }
+                lists{
+                  name
+                    entries{
+                      score
+                        media{
+                          id
+                        }
+                    }
+                }
+              }
+            }
+        `;
+        let variables = { userName: username };
 
-      if (!username) {
-        output.textContent = "Please enter a username.";
-        return;
-      }
-
-      const query = `
+        const response = await fetch('https://graphql.anilist.co', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({ query, variables }),
+        });
+        
+        
+         userlistone = await response.json();
+      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(userlistone, null, 2)} ok \n</p>`;
+      return userlistone;
+    }
+    
+    async function getfollowing(userid) {
+       const query = `
         query ($userId: Int!) {
           Page(page: 1, perPage: 100) {
             following(userId: $userId) {  # hardcoded dummy ID for test
@@ -32,7 +88,7 @@
         }
       `;
 
-      const variables = { userId: 7051939 };
+      const variables = { userId: userid };
         const response = await fetch("https://graphql.anilist.co", {
           method: "POST",
           headers: {
@@ -42,15 +98,86 @@
         });
 
         const result = await response.json();
-
-        // If there's an error
-        if (result.errors) {
-          output.textContent = "Error:\n" + result.errors.map(e => e.message).join("\n");
-          return;
-        }
-        console.log(result);
+        let following_list = result['data']['Page']['following'];
+        console.log("following" + following_list);
     }
-      
+        async function getfollowers(userid) {
+       const query = `
+        query ($userId: Int!) {
+          Page(page: 1, perPage: 100) {
+            followers(userId: $userId) {  # hardcoded dummy ID for test
+              id
+              name
+            }
+          }
+        }
+      `;
+
+      const variables = { userId: userid };
+        const response = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query, variables })
+        });
+
+        const result = await response.json();
+        let follower_list = result['data']['Page']['followers'];
+        console.log("followers " + follower_list);
+    }
+    
+    
+    
+    
+    function standerizelists(userlist) {
+    let temp = userlist['data']['MediaListCollection']['lists'][0];
+    let new_list = [];
+    let mean = userlist['data']['MediaListCollection']['user']['statistics']['anime']['meanScore'];
+    let SD = userlist['data']['MediaListCollection']['user']['statistics']['anime']['standardDeviation'];
+    for (let i=0; i < temp['entries'].length;i++) {
+      let new_score = ((temp['entries'][i]['score'] * 10) - mean) / SD;
+      //console.log(new_score);
+      //console.log("test");
+       const new_entry = {score: new_score, id: temp['entries'][i]['media']['id']};
+       new_list.push(new_entry);
+    }
+    console.log(new_list);
+    console.log(temp);
+    return new_list;
+    }
+    function matchlists(listofmainuser, listofotherperson) {
+      let matched_anime = [];
+      console.log(listofmainuser[34])
+      for (let i = 0; i < listofmainuser.length; i++) {
+        for (let j = 0; j <listofotherperson.length; j++){
+          if (listofmainuser[i]['id'] == listofotherperson[j]['id']) {
+            let anime = { id: listofmainuser[i]['id'], useroneSD: listofmainuser[i]['score'], usertwoSD: listofotherperson[j]['score']};
+            matched_anime.push(anime);
+            break;
+          }
+        }
+      }
+      return matched_anime;  
+      }
+  function compare(formatted_list) {
+    let differenceofscores = [];
+    for (let i = 0; i <formatted_list.length; i++) {
+      let difference = Math.abs(formatted_list[i]['useroneSD'] - formatted_list[i]['usertwoSD']);
+      differenceofscores.push(difference);
+    }
+    console.log(differenceofscores);
+    return differenceofscores;
+  }
+  function calculatefinalstandarddeviationmean(bunchonumbers) {
+    let finalanswer;
+    let sum = 0;
+    for (let i = 0; i < bunchonumbers.length; i++) {
+      sum += bunchonumbers[i];
+    }
+    finalanswer = sum / bunchonumbers.length;
+    return finalanswer;
+  }
   </script>
 </body>
 </html>
