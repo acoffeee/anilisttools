@@ -24,12 +24,20 @@
       let following_list = await getfollowing(maindude['data']['MediaListCollection']['user']['id']);
       let follower_list = await getfollowers(maindude['data']['MediaListCollection']['user']['id']);
       let friend_list = getfriends(following_list, follower_list);
-      userlistone = await standerizelists(userlistone);
-      userlisttwo = await standerizelists(userlisttwo);
-      newly_matched_lists = await matchlists(userlistone, userlisttwo);
+      let User_list_standerized = await standerizelists(maindude);
+      let all_comparisions = []
+      
+      for (let i = 0; friend_list.length; i++) {
+      let friend = friend_list[i];
+      let friend_list = getuserdata(friend);
+      let standerized_friend_list = await standerizelists(friend);
+      newly_matched_lists = await matchlists(User_list_standerized, standerized_friend_list);
       let compared_lists = compare(newly_matched_lists);
       const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
-      document.getElementById("result").innerHTML += `<p> did it work? ${compatibility}`;
+      let formatcompatibilioty = { name: friend, rating: compatibility };
+      all_comparisions.push(formatcompatibilioty)
+      }
+      console.log(all_comparisions);
     }
     
     async function getuserdata(username) {
@@ -140,6 +148,7 @@
         }
       }
       console.log(friends);
+      return friends;
     }
     
     
