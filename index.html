@@ -16,8 +16,10 @@
   <button id = "getusers">Compare users</button>
   <p id="result"></p>
   <p id="testing"></p>
+  <p id="ratelimit"></p>
   <script>
     document.getElementById("getusers").addEventListener("click", listofoperations);
+     
      async function listofoperations() {
       const username = document.getElementById("user").value;
       let maindude= await getuserdata(username);
@@ -28,18 +30,29 @@
       let all_comparisions = [];
       console.log(friend_list);
       for (let i = 0; i<friend_list.length; i++) {
-      let friend = friend_list[i];
-      let current_friend = await getuserdata(friend);
-      let standerized_friend_list = await standerizelists(current_friend);
-      newly_matched_lists = await matchlists(User_list_standerized, standerized_friend_list);
-      let compared_lists = compare(newly_matched_lists);
-      const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
-      let formatcompatibilioty = { name: friend, rating: compatibility, entries_shared: newly_matched_lists.length };
-      all_comparisions.push(formatcompatibilioty);
-      console.log(all_comparisions);
-    }
+        try {
+          let friend = friend_list[i];
+          let current_friend = await getuserdata(friend);
+          let standerized_friend_list = await standerizelists(current_friend);
+          let newly_matched_lists = await matchlists(User_list_standerized, standerized_friend_list);
+          let compared_lists = compare(newly_matched_lists);
+          const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
+          let formatcompatibilioty = { name: friend, rating: compatibility, entries_shared: newly_matched_lists.length };
+          all_comparisions.push(formatcompatibilioty);
+          console.log(all_comparisions); 
+        } catch (error) {
+            for (let timer= 60; timer == 0; timer--) {
+              document.getElementById("ratelimit").innerHTML = `<p> sorry for the delay! we're being rate limited rn please wait ${timer} seconds! </p>`;
+              await sleep(1000);
+            }
+          i--;
+          }
+      }
+      document.getElementById("result").innerHTML = `<p> ${JSON.stringify(all_comparisions, null, 2)}</p>`;
      }
-    
+  function sleep(ms) {
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
     async function getuserdata(username) {
       document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
           const query = `
