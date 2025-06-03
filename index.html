@@ -55,14 +55,17 @@
       }
       createdownloadlink(all_comparisions);
      }
-     
+
+
+
+
 function createdownloadlink(daarray) {
   const list = daarray;
   const blob = new Blob([JSON.stringify(list, null, 2)], {
   type: "application/json",
 });
 const listdownload = URL.createObjectURL(blob)
-document.getElementById("downloadbutton").innerHTML = `<a href="${listdownload} download="Anilistcompatibility.txt"> Click here to download </a>`;
+document.getElementById("downloadbutton").innerHTML = `<a href="${listdownload}" download="Comparisions"><button type="button">Click here to Download your comparisions!</button></a>`;
 
 }
 function sleep(ms) {
