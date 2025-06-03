@@ -27,18 +27,18 @@
       let User_list_standerized = await standerizelists(maindude);
       let all_comparisions = [];
       console.log(friend_list);
-      for (let i = 0; friend_list.length; i++) {
+      for (let i = 0; i<friend_list.length; i++) {
       let friend = friend_list[i];
-      let friends_list = await getuserdata(friend);
-      let standerized_friend_list = await standerizelists(friend);
+      let current_friend = await getuserdata(friend);
+      let standerized_friend_list = await standerizelists(current_friend);
       newly_matched_lists = await matchlists(User_list_standerized, standerized_friend_list);
       let compared_lists = compare(newly_matched_lists);
       const compatibility = await calculatefinalstandarddeviationmean(compared_lists);
       let formatcompatibilioty = { name: friend, rating: compatibility };
       all_comparisions.push(formatcompatibilioty);
-      }
       console.log(all_comparisions);
     }
+     }
     
     async function getuserdata(username) {
       document.getElementById("result").innerHTML = `<p> please be patient! it is loading! </p>`;
