@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <button onclick="downloadArray()">Download Array</button>
+
+  <script>
+    function downloadArray() {
+      const array = ['apple', 'banana', 'cherry'];
+      const content = JSON.stringify(array, null, 2); // Can change format if needed
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'array.json'; // or 'array.txt'
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
