@@ -21,7 +21,7 @@ document.getElementById("thingbutton").addEventListener("click", everything);
 function everything () {
 const game = {canvas: document.getElementById("snakegame"), x: document.getElementById("snakegame").width, y: document.getElementById("snakegame").height};
 document.getElementById("test2").innerHTML= `<p> ${game.x} </p>`;
-const crayon = game.canvas.getContext('2d');
+let crayon = game.canvas.getContext('2d');
 let snake = {x: 0, y: 0, width: game.x / 20, height: game.y /20};
 let direction = "right";
 
@@ -61,21 +61,31 @@ function death_message() {
   document.getElementById("test").innerHTML = `<p> you dead bruh </p>`;
 }
 
-function check_for_colisions () {
+function on_death () {
+   death_message();
+  clearInterval(x);
+}
+function check_for_colisions() {
   if (snake.x == game.x || snake.y == game.y || snake.x <0 || snake.y < 0) {
-    death_message();
-    clearInterval(x);
+    on_death();
+  } else {
+    check_food();
   }
 };
-let food = {x: 0, y: 0, width: game.x /20, y: game.y / 20};
+let food = {x: 0, y: 0, width: game.x /20, height: game.y / 20};
 
-function spawn_food(){
-  crayon.fillStyle= 'black';
-  food.x = Math.floor(Math.random()* 20) * food.width;
-  food.y = Math.floor(Math.random()* 20) * food.height;
+
+function spawn_food() {
+  crayon.fillStyle= 'green';
+  food.x = (Math.floor(Math.random()* 20) * food.width);
+  food.y = (Math.floor(Math.random()* 20) * food.height);
   crayon.fillRect(food.x, food.y, food.width, food.height);
 }
-
+function check_food() {
+  if (snake.x == food.x && snake.y == food.y) {
+    on_death();
+  }
+}
 spawn_food();
 function start() {
   move();
