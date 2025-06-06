@@ -4,23 +4,27 @@
     <style>
     .thegame {
     border: 1px solid black;
-    width: 400px;
-    height: 400px;
     }
     </style>
   </head>
-<body>
+  <body>
+<div style="margin: ; display: flex">
 
-<canvas id="snakegame" class="thegame" >
+<canvas id="snakegame" class="thegame" height = "400px" width = "400px" >
 Your browser does not support the HTML canvas tag.</canvas>
-<p id="test">debug stuff</p>
-<p id="test2">text</p>
+<div>
+<p id="status"> not started</p>
+<p id="time"> time alive: </p>
+<p id="score">score</p>
+<p id="position">position</p>
+</div>
+</div>
 <button id="thingbutton">text</button>
 <script>
 document.getElementById("thingbutton").addEventListener("click", everything);
 function everything () {
 const game = {canvas: document.getElementById("snakegame"), x: document.getElementById("snakegame").width, y: document.getElementById("snakegame").height};
-document.getElementById("test2").innerHTML= `<p> ${game.x} </p>`;
+//document.getElementById("test2").innerHTML= `<p> ${game.x} </p>`;
 let crayon = game.canvas.getContext('2d');
 let snake = {x: 0, y: 0, width: game.x / 20, height: game.y /20};
 let direction = "right";
@@ -56,7 +60,7 @@ if (direction === 'left') {
   snake.y = snake.y + snake.height;
 }
 crayon.fillRect(snake.x, snake.y, snake.width, snake.height);
-document.getElementById("test").innerHTML = `<p> direction: ${direction} x: ${snake.x} y: ${snake.y}</p>`;
+document.getElementById("position").innerHTML = `<p> direction: ${direction} <br> x: ${snake.x} <br>y: ${snake.y}</p>`;
 };
 
 function on_food() {
@@ -88,7 +92,7 @@ function move_body () {
       crayon.fillStyle = 'green';
       next_color++;
     } else {
-      next_color --
+      next_color --;
       crayon.fillStyle = 'red';
     }
     crayon.fillRect(temp.x, temp.y, snake.width, snake.height);
@@ -96,7 +100,7 @@ function move_body () {
     snake_body.unshift(last_to_first);
   }}
 function death_message() {
-  document.getElementById("test").innerHTML = `<p> you dead bruh </p>`;
+  document.getElementById("status").innerHTML = `<p> you dead bruh </p>`;
 }
 
 function on_death () {
@@ -125,8 +129,11 @@ function spawn_food() {
   food.y = (Math.floor(Math.random()* 20) * food.height);
   crayon.fillRect(food.x, food.y, food.width, food.height);
 }
+let score = 0;
 function check_food() {
   if (snake.x == food.x && snake.y == food.y) {
+    score++;
+    document.getElementById("score").innerHTML = `<p> score: ${score} </p>`;
     on_food();
   }
 }
@@ -137,8 +144,7 @@ function start() {
   move_body();
 }
 
-let x = setInterval(start, 200);
-document.getElementById("test").innerHTML = `<p> snake x: ${snake.x}  </p>`;
+let x = setInterval(start,200);
 }
 </script>
 
