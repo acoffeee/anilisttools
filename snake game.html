@@ -26,16 +26,16 @@ let snake = {x: 0, y: 0, width: game.x / 20, height: game.y /20};
 let direction = "right";
 let snake_body = []
 window.addEventListener('keydown', function(event) {
-  if (event.key === 'ArrowDown') {
+  if (event.key === 'ArrowDown' && direction != 'up' || event.key === 'ArrowDown' && snake_body.length === 0) {
     direction = 'down';
   }
-  if (event.key === 'ArrowRight') {
+  if (event.key === 'ArrowRight' && direction != 'left') {
     direction = 'right'
   }
-  if (event.key === 'ArrowLeft') {
+  if (event.key === 'ArrowLeft' && direction != 'right') {
     direction = 'left';
   }
-  if (event.key=== 'ArrowUp') {
+  if (event.key=== 'ArrowUp' && direction!= 'down') {
     direction = 'up';
   } 
 });
