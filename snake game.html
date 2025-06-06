@@ -29,13 +29,13 @@ window.addEventListener('keydown', function(event) {
   if (event.key === 'ArrowDown' && direction != 'up' || event.key === 'ArrowDown' && snake_body.length === 0) {
     direction = 'down';
   }
-  if (event.key === 'ArrowRight' && direction != 'left') {
+  if (event.key === 'ArrowRight' && direction != 'left' || event.key === 'ArrowRight' && snake_body.length === 0) {
     direction = 'right'
   }
-  if (event.key === 'ArrowLeft' && direction != 'right') {
+  if (event.key === 'ArrowLeft' && direction != 'right'|| event.key === 'ArrowLeft' && snake_body.length === 0) {
     direction = 'left';
   }
-  if (event.key=== 'ArrowUp' && direction!= 'down') {
+  if (event.key=== 'ArrowUp' && direction!= 'down' || event.key === 'ArrowUp' && snake_body.length === 0) {
     direction = 'up';
   } 
 });
