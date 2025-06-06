@@ -8,7 +8,7 @@
     </style>
   </head>
   <body>
-<div style="margin: ; display: flex">
+<div style="margin: center; display: flex">
 
 <canvas id="snakegame" class="thegame" height = "400px" width = "400px" >
 Your browser does not support the HTML canvas tag.</canvas>
@@ -33,8 +33,10 @@ const game = {canvas: document.getElementById("snakegame"), x: document.getEleme
 let crayon = game.canvas.getContext('2d');
 let snake = {x: 0, y: 0, width: game.x / 20, height: game.y /20};
 let direction = "right";
-let snake_body = []
-window.addEventListener('keydown', function(event) {
+let snake_body = [];
+
+function move_delay() {
+window.addEventListener('keydown',function(event) {
   if (event.key === 'ArrowDown' && direction != 'up' || event.key === 'ArrowDown' && snake_body.length === 0) {
     direction = 'down';
   }
@@ -47,8 +49,9 @@ window.addEventListener('keydown', function(event) {
   if (event.key=== 'ArrowUp' && direction!= 'down' || event.key === 'ArrowUp' && snake_body.length === 0) {
     direction = 'up';
   } 
+  this.removeEventListener('keydown',arguments.callee,false);
 });
-
+}
 let temp = {x: 0, y: 0};
 function move() {
   temp.x = snake.x;
@@ -152,6 +155,7 @@ function timer () {
 }
 spawn_food();
 function start() {
+  move_delay();
   move();
   move_body();
   check_for_colisions();
