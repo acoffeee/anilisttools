@@ -17,10 +17,14 @@ Your browser does not support the HTML canvas tag.</canvas>
 <p id="time"> time alive: </p>
 <p id="score">score</p>
 <p id="position">position</p>
+<p id="speeddisplay">speed: </p>
 </div>
 </div>
+<div style="display: flex">
+<input id="speed" value="200"> </input>
 <button id="thingbutton">start</button>
-
+</div>
+<p> determines the speed of the snake, this game was made for 200ms a second update <br>note: lower speed is harder</p>
 <script>
 document.getElementById("thingbutton").addEventListener("click", everything);
 function everything () {
@@ -154,7 +158,9 @@ function start() {
 }
 document.getElementById("status").innerHTML = `<p> Still Up and kicking </p>`;
 let alive_clock = setInterval(timer, 1000);
-let x = setInterval(start,200);
+const speed = document.getElementById("speed").value
+document.getElementById("speeddisplay").innerHTML = `<p> speed: ${speed}</p>`;
+let x = setInterval(start,speed);
 }
 </script>
 
