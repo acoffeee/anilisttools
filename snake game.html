@@ -19,7 +19,8 @@ Your browser does not support the HTML canvas tag.</canvas>
 <p id="position">position</p>
 </div>
 </div>
-<button id="thingbutton">text</button>
+<button id="thingbutton">start</button>
+
 <script>
 document.getElementById("thingbutton").addEventListener("click", everything);
 function everything () {
@@ -108,6 +109,7 @@ function on_death () {
   death_message();
   clearInterval(x);
   clearInterval(alive_clock);
+  crayon.clearRect(0, 0, game.canvas.width, game.canvas.height);
 }
 function check_for_colisions() {
   if (snake.x == game.x || snake.y == game.y || snake.x <0 || snake.y < 0) {
@@ -147,8 +149,8 @@ function timer () {
 spawn_food();
 function start() {
   move();
-  check_for_colisions();
   move_body();
+  check_for_colisions();
 }
 document.getElementById("status").innerHTML = `<p> Still Up and kicking </p>`;
 let alive_clock = setInterval(timer, 1000);
