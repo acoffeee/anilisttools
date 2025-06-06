@@ -77,13 +77,20 @@ if (snake_body.length > 0) {
 }
 spawn_food();
 }
+let next_color = 0;
 function move_body () {
   if (snake_body.length === 0) {
     return
   } else {
     crayon.clearRect(snake_body[snake_body.length - 1].x,snake_body[snake_body.length - 1].y, snake.width + 2, snake.height + 2); 
     snake_body[snake_body.length - 1] = {x: temp.x, y: temp.y};
-    let even = snake_body.length % 2 ;
+    if (next_color ==0) {
+      crayon.fillStyle = 'green';
+      next_color++;
+    } else {
+      next_color --
+      crayon.fillStyle = 'red';
+    }
     crayon.fillRect(temp.x, temp.y, snake.width, snake.height);
     let last_to_first = snake_body.pop();
     snake_body.unshift(last_to_first);
