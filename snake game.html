@@ -73,7 +73,7 @@ document.getElementById("position").innerHTML = `<p> direction: ${direction} <br
 };
 
 function on_food() {
-  let place;
+let place;
 if (snake_body.length > 0) {
   place = snake_body.length;
 } else {
@@ -85,7 +85,7 @@ if (snake_body.length > 0) {
   snake_body[place] = {x: snake.x - snake.width, y: snake.y, direction: direction}
 } else if (direction === 'up') {
   snake_body[place] = {x: snake.x, y: snake.y - snake.height, direction: direction}
-} else if (direction==='down') {
+} else if (direction ==='down') {
   snake_body[place] = {x: snake.x , y: snake.y + snake.height, direction: direction}
 }
 spawn_food();
@@ -159,6 +159,7 @@ function start() {
   move();
   move_body();
   check_for_colisions();
+  //document.getElementById("speeddisplay").innerHTML = `<p> ${snake_body.length} </p>`;
 }
 document.getElementById("status").innerHTML = `<p> Still Up and kicking </p>`;
 let alive_clock = setInterval(timer, 1000);
