@@ -43,6 +43,7 @@ window.addEventListener('keydown', function(event) {
     direction = 'up';
   } 
 });
+
 let temp = {x: 0, y: 0};
 function move() {
   temp.x = snake.x;
@@ -104,8 +105,9 @@ function death_message() {
 }
 
 function on_death () {
-   death_message();
+  death_message();
   clearInterval(x);
+  clearInterval(alive_clock);
 }
 function check_for_colisions() {
   if (snake.x == game.x || snake.y == game.y || snake.x <0 || snake.y < 0) {
@@ -137,13 +139,19 @@ function check_food() {
     on_food();
   }
 }
+let time = 0;
+function timer () {
+  document.getElementById("time").innerHTML = `<p> Time alive: ${time} </p>`;
+  time++;
+}
 spawn_food();
 function start() {
   move();
   check_for_colisions();
   move_body();
 }
-
+document.getElementById("status").innerHTML = `<p> Still Up and kicking </p>`;
+let alive_clock = setInterval(timer, 1000);
 let x = setInterval(start,200);
 }
 </script>
