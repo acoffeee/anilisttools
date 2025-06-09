@@ -157,8 +157,8 @@ spawn_food();
 function start() {
   move_delay();
   move();
-  move_body();
   check_for_colisions();
+  move_body();
   //document.getElementById("speeddisplay").innerHTML = `<p> ${snake_body.length} </p>`;
 }
 document.getElementById("status").innerHTML = `<p> Still Up and kicking </p>`;
