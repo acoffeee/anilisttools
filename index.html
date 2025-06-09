@@ -218,7 +218,7 @@ function sleep(ms) {
     let mean = userlist['data']['MediaListCollection']['user']['statistics']['anime']['meanScore'];
     let SD = userlist['data']['MediaListCollection']['user']['statistics']['anime']['standardDeviation'];
     let formatscore;
-    if (temp['entries'][4]['score'] > 11) {
+    if (temp['entries'][4]['score'] > 11 || temp['entries'][11]['score'] > 11) {
       formatscore = 1;
     } else {
       formatscore = 10;
@@ -240,7 +240,7 @@ function sleep(ms) {
     }
     function matchlists(listofmainuser, listofotherperson) {
       let matched_anime = [];
-      console.log(listofmainuser[34])
+      //console.log(listofmainuser[34])
       for (let i = 0; i < listofmainuser.length; i++) {
         for (let j = 0; j <listofotherperson.length; j++){
           if (listofmainuser[i]['id'] == listofotherperson[j]['id']) {
