@@ -224,6 +224,10 @@ function sleep(ms) {
       formatscore = 10;
     }
     for (let i=0; i < temp['entries'].length;i++) {
+      
+       if (temp['entries'][i]['score'] === 0) {
+        continue
+      }
       let new_score = ((temp['entries'][i]['score'] * formatscore) - mean) / SD;
       //console.log(new_score);
       //console.log("test");
