@@ -33,11 +33,18 @@
   <input type="text" id="user"  placeholder="My username" value="coffeee"></input>
   </div>
   <button id = "getusers"> Start</button>
+  <button id="playgame">Snake game?</button>
+  <p>probaby slows the script down quite a bit but tbh idk </p>
+  <div id="game"></div>
   <p id="downloadbutton"></p>
   <p id="result"></p>
   <p id="testing"></p>
   <p id="ratelimit"></p>
   <script>
+    document.getElementById("playgame").addEventListener("click", game);
+    function game() {
+      document.getElementById("game").innerHTML = `<iframe src="https://v0-new-project-oretmbxcolg.vercel.app/snake%20game.html" style="height:600px; width: 600px;"></iframe>`;
+    }
     document.getElementById("getusers").addEventListener("click", listofoperations);
      
      async function listofoperations() {
@@ -83,7 +90,7 @@ function createdownloadlink(daarray) {
   const blob = new Blob([JSON.stringify(list, null, 2)], {
   type: "application/json",
 });
-const listdownload = URL.createObjectURL(blob)
+const listdownload = URL.createObjectURL(blob);
 document.getElementById("downloadbutton").innerHTML = `<a href="${listdownload}" download="Comparisions"><button type="button">Click here to Download your comparisions!</button></a>`;
 
 }
